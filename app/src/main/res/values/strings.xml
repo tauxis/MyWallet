@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MyWallet</string>
+    <string name="source_google_drive">Google Drive</string>
+    <string name="start_drive">Google Drive</string>
+    <string name="login">Se connecter</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="status_logged_out">Déconnecté(e)</string>
+    <string name="status_logged_in">Connecté(e)</string>
+    <string name="status_user_cancelled">User Cancelled</string>
+    <string name="status_error">Erreur: %1$s</string>
+    <string name="not_open_file">Impossible d\'ouvrir le fichier</string>
+
 </resources>

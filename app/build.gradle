@@ -23,7 +23,10 @@ android {
         }
     }
 }
-
+ext {
+    play_services_version = "15.0.1"
+    support_version = "27.1.1"
+}
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -33,5 +36,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    // Google Drive
+    implementation "com.google.android.gms:play-services-auth:$play_services_version"
+    implementation "com.google.android.gms:play-services-drive:$play_services_version"
+    implementation 'com.squareup.okio:okio:1.14.0'
 
 }
