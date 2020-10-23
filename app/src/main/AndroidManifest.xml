@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ccm2.projet.thematique.mywallet">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <meta-data
         android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version"
-        />
-
-
+        android:value="@integer/google_play_services_version" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +15,8 @@
         android:roundIcon="@drawable/wallet"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".photoactivity.PhotoActivity"></activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ccm2.projet.thematique.mywallet.provider"
@@ -24,9 +24,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
-        <activity android:name=".menu.MenuActivity"></activity>
+
+        <activity android:name=".menu.MenuActivity" />
         <activity android:name=".loginactivity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
