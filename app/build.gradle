@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         config {
-            storeFile file('C:\\Users\\Fires\\Documents\\INSSET\\Projet_Thematique\\MyWallet\\app\\src\\main\\res\\mywallet-keystore.jks')
+            storeFile file('./src\\main\\res\\mywallet-keystore.jks')
             storePassword 'mywallet'
             keyAlias 'mywallet'
             keyPassword 'mywallet'
