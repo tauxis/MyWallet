@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Environment
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -13,6 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.drive.*
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.services.drive.DriveScopes
 import okio.Okio
 import java.io.File
 import java.io.IOException
@@ -62,7 +67,7 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
 
     private fun buildGoogleSignInClient() : GoogleSignInClient? {
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestScopes(Drive.SCOPE_FILE)
+            .requestScopes(Scope(DriveScopes.DRIVE))
             .build()
         return GoogleSignIn.getClient(activity, signInOptions)
     }
@@ -71,6 +76,12 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
         val getAccountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
         if (getAccountTask.isSuccessful) {
             initializeDriveClient(getAccountTask.result)
+
+            val credential = GoogleAccountCredential.usingOAuth2(
+                activity, listOf(DriveScopes.DRIVE_FILE)
+            )
+            credential.selectedAccount = getAccountTask.result?.account
+
         } else {
             serviceListener?.handleError(Exception("Sign-in failed.", getAccountTask.exception))
         }
@@ -102,9 +113,10 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
     }
 
 
-    private fun initializeDriveClient(signInAccount: GoogleSignInAccount) {
-        mDriveClient = Drive.getDriveClient(activity.applicationContext, signInAccount)
-        mDriveResourceClient = Drive.getDriveResourceClient(activity.applicationContext,signInAccount)
+    private fun initializeDriveClient(signInAccount: GoogleSignInAccount?) {
+        mDriveClient = signInAccount?.let { Drive.getDriveClient(activity.applicationContext, it) }
+        mDriveResourceClient =
+            signInAccount?.let { Drive.getDriveResourceClient(activity.applicationContext, it) }
         serviceListener?.loggedIn()
     }
 
@@ -125,7 +137,7 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
         val openFileTask = mDriveResourceClient?.openFile(drive, DriveFile.MODE_READ_ONLY)
         openFileTask?.continueWithTask { task ->
             val contents = task.result
-            contents.inputStream.use {
+            contents?.inputStream.use {
                 try {
                     //This is the app's download directory, not the phones
                     val storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
@@ -141,7 +153,7 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
                     serviceListener?.handleError(e)
                 }
             }
-            mDriveResourceClient?.discardContents(contents)
+            mDriveResourceClient?.discardContents(contents!!)
         }?.addOnFailureListener { e ->
             // Handle failure
             Log.e(TAG, "Unable to read contents", e)
@@ -176,7 +188,7 @@ class GoogleDriveService(private val activity: Activity, private val config: Goo
         openTask?.let {
             openTask.continueWith { task ->
                 ActivityCompat.startIntentSenderForResult(
-                    activity, task.result, REQUEST_CODE_OPEN_ITEM,
+                    activity, task.result!!, REQUEST_CODE_OPEN_ITEM,
                     null, 0, 0, 0, null
                 )
             }
