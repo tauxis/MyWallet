@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Toast
 import com.ccm2.projet.thematique.mywallet.R
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_photo.*
 
 class PhotoActivity : AppCompatActivity() {
@@ -17,10 +19,9 @@ class PhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
         button.setOnClickListener {
-            val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (callCameraIntent.resolveActivity(packageManager) != null) {
-                startActivityForResult(callCameraIntent, CAMERA_REQUEST_CODE)
-            }
+            CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -29,6 +30,7 @@ class PhotoActivity : AppCompatActivity() {
             CAMERA_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     imageView.setImageBitmap(data.extras?.get("data") as Bitmap)
+
                 }
             }
             else -> {
