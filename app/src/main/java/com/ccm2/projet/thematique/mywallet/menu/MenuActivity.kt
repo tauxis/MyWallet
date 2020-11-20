@@ -12,7 +12,7 @@ import com.ccm2.projet.thematique.mywallet.photoactivity.PhotoActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_menu.*
-import kotlinx.android.synthetic.main.activity_menu.logout
+
 import java.io.File
 
 
@@ -32,9 +32,9 @@ class MenuActivity : AppCompatActivity(), ServiceListener {
         addPhoto.setOnClickListener() {
             goToAppareilPhoto();
         }
-        logout.setOnClickListener {
+        logoutMenu.setOnClickListener {
             googleDriveService.logout()
-            //LoginActivity().state = GoogleDriveService.ButtonState.LOGGED_OUT
+            LoginActivity().state = GoogleDriveService.ButtonState.LOGGED_OUT
             setButtons()
             finish()
         }
@@ -46,23 +46,7 @@ class MenuActivity : AppCompatActivity(), ServiceListener {
         }
 
         override fun fileDownloaded(file: File) {}
-        //    override fun fileDownloaded(file: File) {
-    //        val intent = Intent(Intent.ACTION_VIEW)
-    //        val apkURI = FileProvider.getUriForFile(
-    //            this,
-    //            applicationContext.packageName + ".provider",
-    //            file)
-    //        val uri = Uri.fromFile(file)
-    //        val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-    //        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-    //        intent.setDataAndType(apkURI, mimeType)
-    //        intent.flags = FLAG_GRANT_READ_URI_PERMISSION
-    //        if (intent.resolveActivity(packageManager) != null) {
-    //            startActivity(intent)
-    //        } else {
-    //            Snackbar.make(login_layout, R.string.not_open_file, Snackbar.LENGTH_LONG).show()
-    //        }
-    //    }
+
 
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
@@ -77,22 +61,23 @@ class MenuActivity : AppCompatActivity(), ServiceListener {
             Snackbar.make(login_layout, errorMessage, Snackbar.LENGTH_LONG).show()
         }
 
-        fun setButtons() {
+        private fun setButtons() {
             when (LoginActivity().state) {
                 GoogleDriveService.ButtonState.LOGGED_OUT -> {
-                    statusL.text = getString(R.string.status_logged_out)
+                    //statusL.text = getString(R.string.status_logged_out)
                     statusM.text = getString(R.string.status_logged_out)
                     //start.isEnabled = false
+                    logoutMenu.isEnabled = false
                     logout.isEnabled = false
                     login.isEnabled = true
                 }
 
                 else -> {
-                    statusL.text = getString(R.string.status_logged_in)
+                    //statusL.text = getString(R.string.status_logged_in)
                     statusM.text = getString(R.string.status_logged_in)
                     //start.isEnabled = true
+                    logoutMenu.isEnabled = true
                     logout.isEnabled = true
-                    login.isEnabled = false
                 }
             }
         }
