@@ -4,9 +4,11 @@ package com.ccm2.projet.thematique.mywallet.loginactivity
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
+import android.os.PersistableBundle
 import android.webkit.MimeTypeMap
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.googleactivity.GoogleDriveConfig
@@ -15,19 +17,23 @@ import com.ccm2.projet.thematique.mywallet.googleactivity.ServiceListener
 import com.ccm2.projet.thematique.mywallet.menu.MenuActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.logout
 import java.io.File
+
 
 class LoginActivity : AppCompatActivity(), ServiceListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val sourceGoogleDrive = getString(R.string.source_google_drive)
+        val documentMimeTypes = GoogleDriveService.documentMimeTypes
+
         val config = GoogleDriveConfig(
-            getString(R.string.source_google_drive),
-            GoogleDriveService.documentMimeTypes
+            sourceGoogleDrive,
+            documentMimeTypes
         )
         googleDriveService = GoogleDriveService(this, config)
+
 
         googleDriveService.serviceListener = this
 
@@ -90,7 +96,8 @@ class LoginActivity : AppCompatActivity(), ServiceListener {
         val apkURI = FileProvider.getUriForFile(
             this,
             applicationContext.packageName + ".provider",
-            file)
+            file
+        )
         val uri = Uri.fromFile(file)
         val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
@@ -117,7 +124,6 @@ class LoginActivity : AppCompatActivity(), ServiceListener {
     private fun goToMenuActivity() {
         startActivity(Intent(this, MenuActivity::class.java))
     }
-
 
 }
 

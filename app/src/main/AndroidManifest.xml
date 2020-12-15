@@ -31,8 +31,12 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".menu.MenuActivity" />
-        <activity android:name=".loginactivity.LoginActivity">
+        <activity android:name=".menu.MenuActivity"
+            android:configChanges="orientation"
+            />
+        <activity android:name=".loginactivity.LoginActivity"
+            android:configChanges="orientation"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,6 +44,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:configChanges="orientation"
             android:theme="@style/Base.Theme.AppCompat"/>
     </application>
 
