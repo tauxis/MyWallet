@@ -66,5 +66,7 @@ dependencies {
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     implementation 'com.google.android.material:material:1.0.0-alpha1'
 
+    //Klaxon json parser
+    implementation 'com.beust:klaxon:5.0.1'
 
 }
