@@ -18,24 +18,30 @@
         app:layout_constraintVertical_bias="0.136" />
 
     <Button
-        android:id="@+id/logoutMenu"
+        android:id="@+id/Upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/logout"
+        android:padding="10dp"
+        android:text="Mettre un fichier en ligne"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.888" />
+        app:layout_constraintVertical_bias="0.552" />
 
-    <TextView
-        android:id="@+id/statusM"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:gravity="center_horizontal"
-        android:text="@string/status_logged_out"
+        android:padding="10dp"
+        android:text="Se Déconnecter"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.918" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

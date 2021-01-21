@@ -2,123 +2,103 @@ package com.ccm2.projet.thematique.mywallet.loginactivity
 
 
 import android.content.Intent
-import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
-import android.os.PersistableBundle
-import android.webkit.MimeTypeMap
+import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import com.ccm2.projet.thematique.mywallet.R
-import com.ccm2.projet.thematique.mywallet.googleactivity.GoogleDriveConfig
-import com.ccm2.projet.thematique.mywallet.googleactivity.GoogleDriveService
-import com.ccm2.projet.thematique.mywallet.googleactivity.ServiceListener
 import com.ccm2.projet.thematique.mywallet.menu.MenuActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
-import java.io.File
 
 
-class LoginActivity : AppCompatActivity(), ServiceListener {
+class LoginActivity : AppCompatActivity() {
+
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var firebaseAuth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val sourceGoogleDrive = getString(R.string.source_google_drive)
-        val documentMimeTypes = GoogleDriveService.documentMimeTypes
+        FirebaseApp.initializeApp(this)
 
-        val config = GoogleDriveConfig(
-            sourceGoogleDrive,
-            documentMimeTypes
-        )
-        googleDriveService = GoogleDriveService(this, config)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        firebaseAuth = FirebaseAuth.getInstance()
 
 
-        googleDriveService.serviceListener = this
-
-        googleDriveService.checkLoginStatus()
-
-        login.setOnClickListener {
-            googleDriveService.signIn()
-        }
-        logout.setOnClickListener {
-            googleDriveService.logout()
-            state = GoogleDriveService.ButtonState.LOGGED_OUT
-            setButtons()
-        }
-        start.setOnClickListener {
-            googleDriveService.pickFiles(null)
-        }
-
-        setButtons()
-
-        gotomenu.setOnClickListener {
-            goToMenuActivity();
+        Signin.setOnClickListener { view: View? ->
+            signInGoogle()
         }
     }
-
-
-    private lateinit var googleDriveService: GoogleDriveService
-    var state = GoogleDriveService.ButtonState.LOGGED_OUT
-
-    fun setButtons() {
-        when (state) {
-            GoogleDriveService.ButtonState.LOGGED_OUT -> {
-                statusL.text = getString(R.string.status_logged_out)
-                //start.isEnabled = false
-                gotomenu.isEnabled = false
-                logout.isEnabled = false
-                login.isEnabled = true
-            }
-
-            else -> {
-                statusL.text = getString(R.string.status_logged_in)
-                //start.isEnabled = true
-                gotomenu.isEnabled = true
-                logout.isEnabled = true
-                login.isEnabled = false
-            }
-        }
+    private  fun signInGoogle(){
+        val signInIntent: Intent =mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent,RC_SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        googleDriveService.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==RC_SIGN_IN){
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleResult(task)
+//            firebaseAuthWithGoogle(account!!)
+        }
     }
 
-    override fun loggedIn() {
-        state = GoogleDriveService.ButtonState.LOGGED_IN
-        setButtons()
+    private fun handleResult(completedTask: Task<GoogleSignInAccount>){
+        try {
+            val account: GoogleSignInAccount? =completedTask.getResult(ApiException::class.java)
+            if (account != null) {
+                UpdateUI(account)
+            }
+        } catch (e: ApiException){
+            Toast.makeText(this,e.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
-    override fun fileDownloaded(file: File) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        val apkURI = FileProvider.getUriForFile(
-            this,
-            applicationContext.packageName + ".provider",
-            file
-        )
-        val uri = Uri.fromFile(file)
-        val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-        intent.setDataAndType(apkURI, mimeType)
-        intent.flags = FLAG_GRANT_READ_URI_PERMISSION
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
-        } else {
-            Snackbar.make(login_layout, R.string.not_open_file, Snackbar.LENGTH_LONG).show()
+
+    private fun UpdateUI(account: GoogleSignInAccount){
+        val credential= GoogleAuthProvider.getCredential(account.idToken,null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener {task->
+            if(task.isSuccessful) {
+                //SavedPreference.setEmail(this,account.email.toString())
+                //SavedPreference.setUsername(this,account.displayName.toString())
+                goToMenuActivity()
+                //finish()
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(GoogleSignIn.getLastSignedInAccount(this)!=null){
+            goToMenuActivity()
+            //finish()
         }
     }
 
 
-    override fun cancelled() {
-        Snackbar.make(login_layout, R.string.status_user_cancelled, Snackbar.LENGTH_LONG).show()
+
+    companion object {
+        private const val RC_SIGN_IN = 9001
     }
 
-    override fun handleError(exception: Exception) {
-        val errorMessage = getString(R.string.status_error, exception.message)
-        Snackbar.make(login_layout, errorMessage, Snackbar.LENGTH_LONG).show()
-    }
 
 
     private fun goToMenuActivity() {

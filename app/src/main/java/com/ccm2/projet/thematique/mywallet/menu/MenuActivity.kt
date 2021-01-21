@@ -1,90 +1,114 @@
 package com.ccm2.projet.thematique.mywallet.menu
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
-import com.ccm2.projet.thematique.mywallet.googleactivity.GoogleDriveConfig
-import com.ccm2.projet.thematique.mywallet.googleactivity.GoogleDriveService
-import com.ccm2.projet.thematique.mywallet.googleactivity.ServiceListener
 import com.ccm2.projet.thematique.mywallet.loginactivity.LoginActivity
 import com.ccm2.projet.thematique.mywallet.photoactivity.PhotoActivity
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_login.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.activity_menu.*
 
-import java.io.File
 
+// declare the GoogleSignInClient
+lateinit var mGoogleSignInClient: GoogleSignInClient
 
-class MenuActivity : AppCompatActivity(), ServiceListener {
+lateinit var storage: FirebaseStorage
+
+// val auth is initialized by lazy
+private val auth by lazy {
+    FirebaseAuth.getInstance()
+}
+
+class MenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
-        val config = GoogleDriveConfig(
-            getString(R.string.source_google_drive),
-            GoogleDriveService.documentMimeTypes
-        )
-        googleDriveService = GoogleDriveService(this, config)
-        //2
-        googleDriveService.serviceListener = this
-        //3
-        googleDriveService.checkLoginStatus()
+
         addPhoto.setOnClickListener() {
             goToAppareilPhoto();
         }
-        logoutMenu.setOnClickListener {
-            googleDriveService.logout()
-            LoginActivity().state = GoogleDriveService.ButtonState.LOGGED_OUT
-            setButtons()
-            finish()
-        }
-    }
-    //// Auth Service
-        private lateinit var googleDriveService: GoogleDriveService
 
-        override fun loggedIn() {
-        }
+        // Auth
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        mGoogleSignInClient= GoogleSignIn.getClient(this, gso)
 
-        override fun fileDownloaded(file: File) {}
-
-
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-            googleDriveService.onActivityResult(requestCode, resultCode, data)
-        }
-        override fun cancelled() {
-            Snackbar.make(login_layout, R.string.status_user_cancelled, Snackbar.LENGTH_LONG).show()
-        }
-
-        override fun handleError(exception: Exception) {
-            val errorMessage = getString(R.string.status_error, exception.message)
-            Snackbar.make(login_layout, errorMessage, Snackbar.LENGTH_LONG).show()
-        }
-
-        private fun setButtons() {
-            when (LoginActivity().state) {
-                GoogleDriveService.ButtonState.LOGGED_OUT -> {
-                    //statusL.text = getString(R.string.status_logged_out)
-                    statusM.text = getString(R.string.status_logged_out)
-                    //start.isEnabled = false
-                    logoutMenu.isEnabled = false
-                    logout.isEnabled = false
-                    login.isEnabled = true
-                }
-
-                else -> {
-                    //statusL.text = getString(R.string.status_logged_in)
-                    statusM.text = getString(R.string.status_logged_in)
-                    //start.isEnabled = true
-                    logoutMenu.isEnabled = true
-                    logout.isEnabled = true
-                }
+        logout.setOnClickListener {
+            mGoogleSignInClient.signOut().addOnCompleteListener {
+                val intent= Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
 
-    ////
+        // end auth
 
+        Upload.setOnClickListener{
+            chooseImg()
+
+        }
+    }
+    ////
+    //// UPLOAD IMAGE
+    private fun chooseImg() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        val mimeTypes = arrayOf("image/*", "application/pdf")
+        intent.type = "*/*"
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        startActivityForResult(Intent.createChooser(intent, "Sélectionner une image"), UPLOAD_FILE)
+    }
+    //// LIST ALL FILES
+//    fun listAllFiles() {
+//        // [START storage_list_all]
+//        val storage = Firebase.storage
+//        val listRef = storage.reference.child("files/uid")
+//
+//        // You'll need to import com.google.firebase.storage.ktx.component1 and
+//        // com.google.firebase.storage.ktx.component2
+//        listRef.listAll()
+//            .addOnSuccessListener { (items, prefixes) ->
+//                prefixes.forEach { prefix ->
+//                    // All the prefixes under listRef.
+//                    // You may call listAll() recursively on them.
+//                }
+//
+//                items.forEach { item ->
+//                    // All the items under listRef.
+//                }
+//            }
+//            .addOnFailureListener {
+//                // Uh-oh, an error occurred!
+//            }
+//        // [END storage_list_all]
+//    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UPLOAD_FILE && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.data != null) {
+                val imgUri = data.data
+
+            }
+        }
+    }
+    //// TAKE PICTURE
     private fun goToAppareilPhoto() {
         startActivity(Intent(this, PhotoActivity::class.java));
+    }
+
+    //// CONSTANTES
+    companion object {
+        private const val UPLOAD_FILE = 100
+        private const val UPLOAs = 200
     }
 }
