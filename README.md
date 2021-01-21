@@ -13,12 +13,12 @@ Il y aura également une vue pour consulter les fichiers stockés dans le cloud 
 - Créer un QR Code pour transférer le lien de téléchargement de l'image / l'image
 
 ## Contributeurs
-[Alexis Taupin](https://github.com/tauxis)
-[Cyril Boutillier](https://github.com/Boutillier-Cyril)
+- [Alexis Taupin](https://github.com/tauxis)
+- [Cyril Boutillier](https://github.com/Boutillier-Cyril)
 
 ## Technologies & Apis utilisées
-[FireBase](https://firebase.google.com/)
-[FileIO pour stockage temporaire](https://www.file.io/)
-[Appareil Photo Natif](https://developer.android.com/training/camera/photobasics)
-[Modification Photo](https://stackoverflow.com/questions/46127064/capture-and-save-image-with-kotlin-in-android-studio)
-[Envoi de Mail] ```txt à renseigner```
+- [FireBase](https://firebase.google.com/)
+- [FileIO pour stockage temporaire](https://www.file.io/)
+- [Appareil Photo Natif](https://developer.android.com/training/camera/photobasics)
+- [Modification Photo](https://stackoverflow.com/questions/46127064/capture-and-save-image-with-kotlin-in-android-studio)
+- [Envoi de Mail] ```txt à renseigner```
