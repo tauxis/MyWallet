@@ -12,8 +12,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_storage.*
+import java.util.Observer
 
 class StorageActivity : AppCompatActivity(){
+
+    private lateinit var mAdapter: ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,7 @@ class StorageActivity : AppCompatActivity(){
                     Log.d("item", "$it")
                     itemList.add(StorageItem(it.toString(), item.name, item.path))
                 }.addOnCompleteListener {
-                    recyclerView.adapter = ItemAdapter(itemList, this)
+                    recyclerView.adapter = ItemAdapter( this, itemList)
                     recyclerView.layoutManager = LinearLayoutManager(this)
                     progressBar.visibility = View.GONE
                 }

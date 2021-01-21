@@ -15,10 +15,12 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 
-class ItemAdapter(private var items: List<StorageItem>, private val context: Context):
+class ItemAdapter(private val context: Context, var items: ArrayList<StorageItem>):
     RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
+
     private val inflater : LayoutInflater = LayoutInflater.from(context)
+
     val firebaseStorage = FirebaseStorage.getInstance()
     var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
 
@@ -44,6 +46,7 @@ class ItemAdapter(private var items: List<StorageItem>, private val context: Con
             deleteItem(item.itemPath)
             items.drop(position)
             this.notifyDataSetChanged()
+            rebuild(items)
         }
         builder.setNegativeButton("Non") { dialog, which ->
             dialog.dismiss()
@@ -63,7 +66,13 @@ class ItemAdapter(private var items: List<StorageItem>, private val context: Con
         val textViewName: TextView = view.findViewById(R.id.itemRecyclerViewName)
     }
 
-
+    fun rebuild(itemList : ArrayList<StorageItem>) {
+        // This is the simplest way to update the list
+        itemList.clear()
+        itemList.addAll(itemList)
+        // Needed to said to recycler view we have new data
+        this.notifyDataSetChanged()
+    }
 
 }
 
