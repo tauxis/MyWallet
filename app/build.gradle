@@ -80,6 +80,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'
 
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //cardview&recyclerview
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    //Fuel
+    implementation 'com.github.kittinunf.fuel:fuel:2.3.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

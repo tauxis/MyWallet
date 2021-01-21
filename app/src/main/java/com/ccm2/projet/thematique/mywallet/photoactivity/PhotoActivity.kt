@@ -1,6 +1,5 @@
 package com.ccm2.projet.thematique.mywallet.photoactivity
 
-import android.R.attr
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -8,18 +7,25 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.fileio.FileIO
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_photo.*
+
 
 
 class PhotoActivity : AppCompatActivity() {
     val CAMERA_REQUEST_CODE = 0
     
     private lateinit var resultBitmap: Bitmap
+    private lateinit var resultHolyUri: Uri
     private var tmpFile: FileIO = FileIO()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,14 +41,63 @@ class PhotoActivity : AppCompatActivity() {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
         }
+        upload.setOnClickListener{
+            alertUpload(resultHolyUri)
+        }
         valid_photo.setOnClickListener {
-            // TODO : Envoyer le bitmap vers Drive / Envoyer par mail /
-            val link = tmpFile.getLocalLink(resultBitmap);
+            // TODO : Envoyer par mail le lien obtenu
+            val link = tmpFile.getLocalLink(resultHolyUri)
             if (link != null) {
                 Log.d("Link", link)
             }
         }
     }
+    fun alertUpload(holyUri: Uri){
+        val alert: AlertDialog.Builder = AlertDialog.Builder(this)
+        val edittext = EditText(this)
+        alert.setMessage("Quel est le nom du fichier ?");
+        alert.setTitle("Envoyer une photo dans le cloud");
+        alert.setView(edittext);
+        alert.setPositiveButton(
+            "Confirmer"
+        ) { dialog, whichButton -> //What ever you want to do with the value
+            val youEditTextValue = edittext.text.toString()
+            uploadPNG(holyUri,youEditTextValue)
+        }
+
+        alert.setNegativeButton(
+            "Annuler"
+        ) { dialog, whichButton ->
+
+        }
+        alert.show()
+    }
+
+    fun uploadPNG(holyUri: Uri, filename: String){
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val currentFirebaseUser = FirebaseAuth.getInstance().currentUser
+        if (currentFirebaseUser != null) {
+            Log.d("Firebase user",currentFirebaseUser.uid.toString())
+        }
+        Log.d("Tag pathname firebase","Users/" + (currentFirebaseUser?.uid ?: "UIDNOTFOUND")+"/"+filename)
+        val ref = firebaseStorage.reference.child(
+            "Users/" + (currentFirebaseUser?.uid.toString() ?: "UIDNOTFOUND")+"/"+filename
+        )
+
+        val task = ref.putFile(holyUri)
+        task.addOnProgressListener {
+            val progress = (100.0 * it.bytesTransferred) / it.totalByteCount
+            Toast.makeText(this, "Upload image progress ${progress} %", Toast.LENGTH_SHORT).show()
+        }
+        task.addOnFailureListener {
+            Toast.makeText(this, "OnFailure ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+        task.addOnCompleteListener {
+            Toast.makeText(this, "OnComplete", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -57,6 +112,7 @@ class PhotoActivity : AppCompatActivity() {
                 val bitmapDrawable = drawable as BitmapDrawable
                 val bitmap = bitmapDrawable.bitmap
                 resultBitmap = bitmap
+                resultHolyUri = resultUri
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
                 System.out.println(error);

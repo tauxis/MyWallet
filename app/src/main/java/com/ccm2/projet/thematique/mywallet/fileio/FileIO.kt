@@ -1,12 +1,12 @@
 package com.ccm2.projet.thematique.mywallet.fileio
 
-import android.graphics.Bitmap
-import android.os.Environment
+import android.net.Uri
 import android.util.Log
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.httpPost
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -23,35 +23,24 @@ class FileIO {
         }
     }
 
-    private fun createTempPNG(tempPicture: Bitmap):String{
+    private fun createTempPNG(tempUri: Uri):String{
 
-        val directory:String = Environment.getDataDirectory().absolutePath.toString() +"/com.ccm2.projet.thematique.mywallet/files/"
-        Log.e("directory", directory)
-        folderExist(directory)
-        Log.e("directory exist", "directory exist")
-        val f = File(directory,"tempfile.png")
-        Log.e("directory f created", "directory f created")
-
-        Log.e("file path", f.absolutePath.toString())
-//        val image = File.createTempFile(
-//            "tmpfile",  // prefix
-//            ".png",  // suffix
-//            f // directory
-//        )
-        f.createNewFile()
-        Log.e("image created ", "image created")
-        //val bos = ByteArrayOutputStream()
-        tempPicture.compress(Bitmap.CompressFormat.PNG, 0, FileOutputStream(f));
-        Log.e("image completed", "image completed")
-        /*val bitmapData = bos.toByteArray()
-
-        //write the bytes in file
-        val fos = FileOutputStream(f)
-        fos.write(bitmapData)
-        fos.flush()
-        fos.close()*/
-
-        return directory+"/"+"tmpfile.png"
+//        val directory:String = Environment.getDataDirectory().absolutePath.toString() +"/MyWallet/tmp"
+//        Log.e("directory", directory)
+//        folderExist(directory)
+//        val f = File(directory,"tempfile.png")
+//        f.createNewFile()
+//        val  bos = ByteArrayOutputStream();
+//        tempPicture.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+//        val bitmapData = bos.toByteArray();
+//
+//        val fos = FileOutputStream(f);
+//        fos.write(bitmapData);
+//        fos.flush();
+//        fos.close();
+        val uri =File(tempUri.path.toString()).toString();
+        Log.w("UriStr",uri)
+        return uri
     }
 
     private fun exec(
@@ -75,6 +64,7 @@ class FileIO {
                     waitFor(60, TimeUnit.SECONDS)
                 }
             if (captureOutput) {
+                Log.d("readtextred",process.inputStream.bufferedReader().readText())
                 return process.inputStream.bufferedReader().readText()
             }
         } catch (e: IOException) {
@@ -84,15 +74,18 @@ class FileIO {
     }
 
     private fun postTmpFile(filePath: String): String? {
-        val result= exec("curl -F \"file=@" + filePath + "\" https://file.io?expires1w", "", true)
-        if (result != null) {Log.e("tag", result)}
-        else{Log.e("tag", "Result is null")}
+        Log.e("postTmpFile", "Entrée dans posttmpfile()")
+        //Log.e("postTmpFile","curl -F \"file=@$filePath\" https://file.io?expires1w")
+        val result= exec("curl -F \"file=@$filePath\" https://file.io?expires1w", "", true)
+        Log.e("postTmpFile", result.toString())
         return result
     }
 
-    fun getLocalLink(tempPicture: Bitmap):String? {
-        val tmpFilePath = createTempPNG(tempPicture)
+    fun getLocalLink(holyUri: Uri):String? {
+        val tmpFilePath = createTempPNG(holyUri)
+        Log.d("tmpFilePath",tmpFilePath)
         val returnedResult = postTmpFile(tmpFilePath)
+        Log.d("return result",returnedResult.toString())
         val parser: Parser = Parser.default()
         val stringBuilder: StringBuilder = StringBuilder(returnedResult)
         val json: JsonObject = parser.parse(stringBuilder) as JsonObject
