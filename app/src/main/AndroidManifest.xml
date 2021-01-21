@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ccm2.projet.thematique.mywallet"
-    >
+    package="com.ccm2.projet.thematique.mywallet">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.google.android.gm.permission.WRITE_GMAIL" />
     <uses-permission android:name="com.google.android.gm.permission.AUTO_SEND" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <meta-data
         android:name="com.google.android.gms.version"
@@ -26,10 +25,11 @@
         android:roundIcon="@drawable/wallet"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".photoactivity.PhotoActivity"
+        <activity android:name=".mailactivity.MailActivity"></activity>
+        <activity
+            android:name=".photoactivity.PhotoActivity"
             android:exported="true"
-            android:grantUriPermissions="true"
-        />
+            android:grantUriPermissions="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -41,20 +41,17 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".menu.MenuActivity"
-            />
-        <activity android:name=".loginactivity.LoginActivity"
-            >
+        <activity android:name=".menu.MenuActivity" />
+        <activity android:name=".loginactivity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat">
-        </activity>
-
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"></activity>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.loginactivity.LoginActivity
+import com.ccm2.projet.thematique.mywallet.mailactivity.MailActivity
 import com.ccm2.projet.thematique.mywallet.photoactivity.PhotoActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -34,6 +35,10 @@ class MenuActivity : AppCompatActivity() {
 
         addPhoto.setOnClickListener() {
             goToAppareilPhoto();
+        }
+
+        sendFile.setOnClickListener() {
+            goToSendFile();
         }
 
         // Auth
@@ -104,6 +109,10 @@ class MenuActivity : AppCompatActivity() {
     //// TAKE PICTURE
     private fun goToAppareilPhoto() {
         startActivity(Intent(this, PhotoActivity::class.java));
+    }
+
+    private fun goToSendFile() {
+        startActivity(Intent(this, MailActivity::class.java));
     }
 
     //// CONSTANTES
