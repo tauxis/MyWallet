@@ -15,11 +15,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
     />
+
     <Button
-        android:id="@+id/restart_photo"
+        android:id="@+id/upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:text="@string/upload_photo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/valid_photo"
+        app:layout_constraintStart_toEndOf="@+id/restart_photo" />
+
+    <Button
+        android:id="@+id/restart_photo"
+        android:layout_width="152dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
         android:text="@string/restart_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

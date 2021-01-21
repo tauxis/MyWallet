@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.ccm2.projet.thematique.mywallet">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,8 +9,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="com.google.android.gm.permission.WRITE_GMAIL" />
-    <uses-permission android:name="com.google.android.gm.permission.AUTO_SEND" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <meta-data
@@ -25,11 +22,8 @@
         android:roundIcon="@drawable/wallet"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mailactivity.MailActivity"></activity>
-        <activity
-            android:name=".photoactivity.PhotoActivity"
-            android:exported="true"
-            android:grantUriPermissions="true" />
+        <activity android:name=".storage.StorageActivity"></activity>
+        <activity android:name=".photoactivity.PhotoActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -41,8 +35,12 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".menu.MenuActivity" />
-        <activity android:name=".loginactivity.LoginActivity">
+        <activity
+            android:name=".menu.MenuActivity"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".loginactivity.LoginActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,7 +49,8 @@
         </activity>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"></activity>
+            android:configChanges="orientation"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

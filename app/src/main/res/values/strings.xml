@@ -8,6 +8,7 @@
     <string name="status_error">Erreur: %1$s</string>
     <string name="not_open_file">Impossible d\'ouvrir le fichier</string>
     <!--  Activité Photo (PhotoActivity)  -->
+    <string name="upload_photo">Upload</string>
     <string name="restart_photo">Recommencer</string>
     <string name="valid_photo">Valider</string>
 </resources>
