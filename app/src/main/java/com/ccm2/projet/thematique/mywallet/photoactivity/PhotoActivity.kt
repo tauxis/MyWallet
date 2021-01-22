@@ -36,20 +36,22 @@ class PhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
 
+        checkStatus()
 
         CropImage.activity()
             .setGuidelines(CropImageView.Guidelines.ON)
-            .start(this);
+            .start(this)
         restart_photo.setOnClickListener {
             CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .start(this);
+                .start(this)
+            checkStatus()
         }
         upload.setOnClickListener{
             alertUpload(resultHolyUri)
         }
         valid_photo.setOnClickListener {
-            // TODO : Envoyer par mail le lien obtenu
+            // TODO : Envoyer par mail le lien obtenu doesn't work yet
             val link = tmpFile.getLocalLink(resultHolyUri)
             if (link != null) {
                 Log.d("Link", link)
@@ -101,6 +103,17 @@ class PhotoActivity : AppCompatActivity() {
         }
     }
 
+    fun checkStatus(){
+        if (cropImageView.drawable==null) {
+            upload.isEnabled=false
+            valid_photo.isEnabled=false
+        }
+        else{
+            upload.isEnabled=true
+            valid_photo.isEnabled=true
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -111,6 +124,7 @@ class PhotoActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val resultUri: Uri = result.uri
                 cropImageView.setImageURI(resultUri);
+                checkStatus()
                 Log.d("uri result", resultUri.toString())
                 val drawable: Drawable = cropImageView.drawable
                 val bitmapDrawable = drawable as BitmapDrawable
@@ -119,6 +133,7 @@ class PhotoActivity : AppCompatActivity() {
                 resultHolyUri = resultUri
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
+                checkStatus()
                 System.out.println(error);
             }
         }

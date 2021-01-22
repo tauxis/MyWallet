@@ -43,8 +43,8 @@ class ItemAdapter(private val context: Context, var items: ArrayList<StorageItem
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Supprimer l'item ?")
         builder.setPositiveButton("Oui") { dialog, which ->
-            deleteItem(item.itemPath)
             items.drop(position)
+            deleteItem(item.itemPath)
             rebuild(items)
         }
         builder.setNegativeButton("Non") { dialog, which ->

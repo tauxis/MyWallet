@@ -12,26 +12,22 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_storage.*
-import java.util.Observer
 
 class StorageActivity : AppCompatActivity(){
 
     private lateinit var mAdapter: ItemAdapter
-
+    var firebaseStorage = FirebaseStorage.getInstance()
+    var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
+    var storageRef = firebaseStorage.getReference(
+        "Users/" + (currentFirebaseUser?.uid ?: "UIDNOTFOUND)")
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_storage)
-
-        var firebaseStorage = FirebaseStorage.getInstance()
-        var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
-        var storageRef = firebaseStorage.getReference(
-            "Users/" + (currentFirebaseUser?.uid ?: "UIDNOTFOUND)")
-        )
         progressBar.visibility = View.VISIBLE
 
         val listAllTask: Task<ListResult> = storageRef.listAll()
         listAll(listAllTask)
-
     }
 
     fun listAll(listAllTask: Task<ListResult>){
@@ -40,7 +36,6 @@ class StorageActivity : AppCompatActivity(){
             val items: List<StorageReference> = result.result!!.items
             //add cycle for add image url to list
             items.forEachIndexed { index, item ->
-                Log.d("", item.name)
                 Log.d("METADATA", item.metadata.toString())
 
                 item.downloadUrl.addOnSuccessListener {
