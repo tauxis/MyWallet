@@ -43,9 +43,6 @@ class MenuActivity : AppCompatActivity() {
             goToAppareilPhoto();
         }
 
-        sendFile.setOnClickListener() {
-            goToSendFile();
-        }
 
         // Auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -141,9 +138,6 @@ class MenuActivity : AppCompatActivity() {
         startActivity(Intent(this, PhotoActivity::class.java));
     }
 
-    private fun goToSendFile() {
-        startActivity(Intent(this, MailActivity::class.java));
-    }
 
     private fun goToStorage() {
         startActivity(Intent(this, StorageActivity::class.java));
