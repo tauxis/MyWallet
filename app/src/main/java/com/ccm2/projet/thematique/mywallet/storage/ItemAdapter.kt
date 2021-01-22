@@ -36,7 +36,7 @@ class ItemAdapter(private val context: Context, var items: ArrayList<StorageItem
         val item = items[position]
         Picasso.get().load(item.itemUrl).into(holder.imageView)
         holder.textViewName.text=item.itemName
-        holder.itemView.setOnClickListener{ clickAction(position, item) }
+        holder.deleteButton.setOnClickListener{ clickAction(position, item) }
     }
 
     private fun clickAction(position: Int, item: StorageItem){
@@ -45,7 +45,6 @@ class ItemAdapter(private val context: Context, var items: ArrayList<StorageItem
         builder.setPositiveButton("Oui") { dialog, which ->
             deleteItem(item.itemPath)
             items.drop(position)
-            this.notifyDataSetChanged()
             rebuild(items)
         }
         builder.setNegativeButton("Non") { dialog, which ->
@@ -64,6 +63,7 @@ class ItemAdapter(private val context: Context, var items: ArrayList<StorageItem
     class ViewHolder(view: View):RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.itemRecyclerViewImage)
         val textViewName: TextView = view.findViewById(R.id.itemRecyclerViewName)
+        val deleteButton: ImageView = view.findViewById(R.id.delete_button)
     }
 
     fun rebuild(itemList : ArrayList<StorageItem>) {

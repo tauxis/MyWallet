@@ -19,8 +19,8 @@
 
     <TextView
         android:id="@+id/itemRecyclerViewName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_height="25dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="48dp"
         android:layout_marginRight="16dp"
@@ -32,5 +32,15 @@
         app:layout_constraintTop_toTopOf="@+id/itemRecyclerViewImage"
         app:layout_constraintVertical_chainStyle="spread"
         tools:text="@tools:sample/cities" />
+
+    <ImageView
+        android:id="@+id/delete_button"
+        android:layout_width="40dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/delete_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
