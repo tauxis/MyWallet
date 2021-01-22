@@ -72,7 +72,7 @@ class MenuActivity : AppCompatActivity() {
     //// UPLOAD IMAGE
     private fun chooseImg() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        val mimeTypes = arrayOf("image/*", "application/pdf")
+        val mimeTypes = arrayOf("image/*")
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         startActivityForResult(Intent.createChooser(intent, "Sélectionner une image"), UPLOAD_FILE)
