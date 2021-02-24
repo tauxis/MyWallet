@@ -22,13 +22,13 @@
         android:roundIcon="@drawable/wallet"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mailactivity.MailActivity"></activity>
+        <activity android:name=".parametersactivity.ParametersActivity"></activity>
+        <activity android:name=".mailactivity.MailActivity" />
         <activity
             android:name=".photoactivity.PhotoActivity"
             android:exported="true"
             android:grantUriPermissions="true" />
-
-        <activity android:name=".storage.StorageActivity"></activity>
+        <activity android:name=".storage.StorageActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

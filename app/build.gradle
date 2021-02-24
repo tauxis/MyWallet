@@ -86,6 +86,8 @@ dependencies {
     //Fuel
     implementation 'com.github.kittinunf.fuel:fuel:2.3.1'
 
+
+    implementation "androidx.preference:preference-ktx:1.1.1"
 }
 
 apply plugin: 'com.google.gms.google-services'
