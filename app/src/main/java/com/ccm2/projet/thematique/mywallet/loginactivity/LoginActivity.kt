@@ -1,14 +1,18 @@
 package com.ccm2.projet.thematique.mywallet.loginactivity
 
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.menu.MenuActivity
+import com.ccm2.projet.thematique.mywallet.parametersactivity.ParametersActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -28,10 +32,11 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
-
+    private lateinit var objectSharedPreferences : SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
 
         FirebaseApp.initializeApp(this)
 
@@ -43,7 +48,8 @@ class LoginActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-
+        objectSharedPreferences=this.getSharedPreferences("MyWalletPreferences", Context.MODE_PRIVATE)
+        checkTheme()
         Signin.setOnClickListener { view: View? ->
             signInGoogle()
         }
@@ -58,7 +64,6 @@ class LoginActivity : AppCompatActivity() {
         if(requestCode==RC_SIGN_IN){
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleResult(task)
-//            firebaseAuthWithGoogle(account!!)
         }
     }
 
@@ -77,10 +82,7 @@ class LoginActivity : AppCompatActivity() {
         val credential= GoogleAuthProvider.getCredential(account.idToken,null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {task->
             if(task.isSuccessful) {
-                //SavedPreference.setEmail(this,account.email.toString())
-                //SavedPreference.setUsername(this,account.displayName.toString())
                 goToMenuActivity()
-                //finish()
             }
         }
     }
@@ -89,14 +91,32 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         if(GoogleSignIn.getLastSignedInAccount(this)!=null){
             goToMenuActivity()
-            //finish()
         }
     }
 
 
-
     companion object {
         private const val RC_SIGN_IN = 9001
+        private const val DARK_STATUS = "io.ccm2.projet.thematique.mywallet.parameters.DARK_STATUS"
+
+    }
+
+    private fun checkTheme() {
+
+        when (objectSharedPreferences.getInt(DARK_STATUS,2)) {
+            0 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                delegate.applyDayNight()
+            }
+            1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                delegate.applyDayNight()
+            }
+            2 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                delegate.applyDayNight()
+            }
+        }
     }
 
 

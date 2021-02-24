@@ -68,6 +68,7 @@ class FileIO {
                 return process.inputStream.bufferedReader().readText()
             }
         } catch (e: IOException) {
+            Log.d("ICIII",e.toString())
             e.printStackTrace()
         }
         return null

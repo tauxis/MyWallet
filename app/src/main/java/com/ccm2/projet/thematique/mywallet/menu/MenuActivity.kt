@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.loginactivity.LoginActivity
 import com.ccm2.projet.thematique.mywallet.mailactivity.MailActivity
+import com.ccm2.projet.thematique.mywallet.parametersactivity.ParametersActivity
 import com.ccm2.projet.thematique.mywallet.photoactivity.PhotoActivity
 import com.ccm2.projet.thematique.mywallet.storage.StorageActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -67,6 +68,7 @@ class MenuActivity : AppCompatActivity() {
         addPhoto.setOnClickListener{ goToAppareilPhoto() }
         storage.setOnClickListener { goToStorage() }
         Upload.setOnClickListener{ chooseImg() }
+        parameters.setOnClickListener{ goToParameters() }
     }
     ////
     //// UPLOAD IMAGE
@@ -148,6 +150,11 @@ class MenuActivity : AppCompatActivity() {
     private fun goToStorage() {
         startActivity(Intent(this, StorageActivity::class.java));
     }
+
+    private fun goToParameters() {
+        startActivity(Intent(this, ParametersActivity::class.java));
+    }
+
     //// CONSTANTES
     companion object {
         private const val UPLOAD_FILE = 100
