@@ -132,7 +132,7 @@ class PhotoActivity : AppCompatActivity() {
                 val bitmap = bitmapDrawable.bitmap
                 resultBitmap = bitmap
                 resultHolyUri = resultUri
-                MediaStore.Images.Media.insertImage(contentResolver, resultBitmap, "nom image", "une image")
+                MediaStore.Images.Media.insertImage(contentResolver, resultBitmap, "fileIO", "une image")
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
                 checkStatus()
