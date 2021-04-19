@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyWallet</string>
+    <string name="menu_item_delete">Delete</string>
+    <string name="logout">Log out</string>
+    <string name="status_logged_out">Logged out</string>
+    <string name="status_logged_in">Logged in</string>
+    <string name="status_user_cancelled">User Cancelled</string>
+    <string name="status_error">Error: %1$s</string>
+    <string name="not_open_file">Can\'t open file</string>
+    <string name="upload_photo">Upload</string>
+    <string name="restart_photo">Restart</string>
+    <string name="valid_photo">Send</string>
+    <string name="menu_item_selected">Selected : %1$s</string>
+    <string name="send_mail">Envoyer par mail</string>
+</resources>
