@@ -2,6 +2,7 @@ package com.ccm2.projet.thematique.mywallet.storage
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.view.ActionMode
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_storage.*
+import kotlin.collections.ArrayList
 
 class StorageActivity : AppCompatActivity(){
 
@@ -21,6 +23,8 @@ class StorageActivity : AppCompatActivity(){
     var storageRef = firebaseStorage.getReference(
         "Users/" + (currentFirebaseUser?.uid ?: "UIDNOTFOUND)")
     )
+    var actionMode: ActionMode? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_storage)
@@ -29,6 +33,13 @@ class StorageActivity : AppCompatActivity(){
         val listAllTask: Task<ListResult> = storageRef.listAll()
         listAll(listAllTask)
     }
+
+    fun titleChange(){
+        val count: String = mAdapter.selectedItemsCount()
+
+        actionMode?.title  = count
+    }
+
 
     fun listAll(listAllTask: Task<ListResult>){
         val itemList:ArrayList<StorageItem> = ArrayList()
@@ -42,7 +53,8 @@ class StorageActivity : AppCompatActivity(){
                     Log.d("item", "$it")
                     itemList.add(StorageItem(it.toString(), item.name, item.path))
                 }.addOnCompleteListener {
-                    recyclerView.adapter = ItemAdapter( this, itemList)
+                    mAdapter = ItemAdapter(this, itemList, activity = this,{titleChange()})
+                    recyclerView.adapter = mAdapter
                     recyclerView.layoutManager = LinearLayoutManager(this)
                     progressBar.visibility = View.GONE
                 }
