@@ -4,8 +4,13 @@ import android.net.Uri
 import android.util.Log
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.ccm2.projet.thematique.mywallet.fileio.endpoint.FileIOEndpoint
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.httpPost
+import com.google.gson.GsonBuilder
+import okhttp3.RequestBody
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -97,6 +102,21 @@ class FileIO {
             return link
         }
         return null
+    }
+
+    fun postFile() {
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl("https://wwww.file.io")
+            .build()
+
+        val service = retrofit.create(FileIOEndpoint::class.java)
+
+        //getfile ici
+
+        val fields: HashMap<String?, RequestBody?> = HashMap()
+        fields["file\"; filename=\"upload_file.txt\" "] = (file).asRequestBody("text/plain".toMediaTypeOrNull())
+
+
     }
 }
 
