@@ -51,13 +51,13 @@ class PhotoActivity : AppCompatActivity() {
         upload.setOnClickListener{
             alertUpload(resultHolyUri)
         }
-        valid_photo.setOnClickListener {
-            // TODO : Envoyer par mail le lien obtenu doesn't work yet
-            val link = tmpFile.getLocalLink(resultHolyUri)
-            if (link != null) {
-                Log.d("Link", link)
-            }
-        }
+//        valid_photo.setOnClickListener {
+//            // TODO : Envoyer par mail le lien obtenu doesn't work yet
+//            //val link = tmpFile.getLocalLink(resultHolyUri)
+////            if (link != null) {
+////                Log.d("Link", link)
+////            }
+//        }
     }
     fun alertUpload(holyUri: Uri){
         val alert: AlertDialog.Builder = AlertDialog.Builder(this)
