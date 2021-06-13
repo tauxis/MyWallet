@@ -23,25 +23,25 @@ open class ZipService {
 
     fun zipFilesSelected(selectedItems: ArrayList<StorageItem>):String{
         if (path.exists()) {
-            val test = mFolder.mkdirs()
-            Log.d("PATH mFolder TEST", test.toString() +" - "+ mFolder.isDirectory)
-        }
-        Log.d("PATH", mFolder.toString())
-        if (!mFolder.exists()) {
-            Log.d("MAKE DIR", mFolder.mkdirs().toString() + "")
+            mFolder.mkdirs()
         }
         val zipFile = File(mFolder.absolutePath, filename)
         try {
             val fileOutputStream = FileOutputStream(zipFile);
             val zipOutputStream = ZipOutputStream(BufferedOutputStream(fileOutputStream));
+            zipOutputStream.setLevel(9)
 
             selectedItems.forEachIndexed { index, item ->
                 Log.d("FILE+$index", item.itemUrl)
-                zip(zipOutputStream, item.itemUrl,item.itemName)
+                zip(zipOutputStream, item.itemUrl, item.itemName)
             }
+            zipOutputStream.flush()
+            fileOutputStream.flush()
+            zipOutputStream.close()
+            fileOutputStream.close()
         }
-        catch(e:FileNotFoundException ){
-            Log.e("CREATE FILE",e.toString())
+        catch (e: FileNotFoundException){
+            Log.e("CREATE FILE", e.toString())
         }
 
         Log.d("ZIPFILE", zipFile.toString())
@@ -80,13 +80,14 @@ open class ZipService {
         val inputStream = ByteArrayInputStream(stream.toByteArray())
         input = BufferedInputStream(inputStream, BUFFER_SIZE)
 
-
         val entry = ZipEntry("$itemName.jpg")
         zipOutputStream.putNextEntry(entry)
-        var count: Int
-        while (input.read(data, 0, BUFFER_SIZE).also { count = it } != -1) {
-            zipOutputStream.write(data, 0, count)
+
+        var length: Int
+        while (input.read(data).also { length = it } > 0) {
+            zipOutputStream.write(data, 0, length)
         }
+
         input.close()
         zipOutputStream.closeEntry()
     }

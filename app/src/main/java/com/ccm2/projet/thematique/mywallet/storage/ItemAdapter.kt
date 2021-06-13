@@ -150,9 +150,13 @@ class ItemAdapter(
         if (item.itemId == R.id.action_qr) {
             if(selectedItems.isNotEmpty()) {
                 Toast.makeText(context, "Création du zip en cours", Toast.LENGTH_SHORT).show()
+                //Instanciation de la classe
                 zipService = ZipService()
+                //Fichiers séléctionnés dans le ZIP
                 val zipFile = zipService.zipFilesSelected(selectedItems)
                 Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
+                //Supprimer le zip lorsqu'il a été utilisé
+                //zipService.cleanZip()
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
         }
 
