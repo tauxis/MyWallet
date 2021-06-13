@@ -16,7 +16,7 @@ class FileIO {
         val f = File(
             pathname
         )
-        Log.d("pathname", f.getAbsolutePath().toString())
+        Log.d("pathname", f.absolutePath.toString())
         if (!f.exists()){
             f.mkdirs()
             Log.d("Creation dossier", "Dossier cree")

@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.*
 import android.view.View.*
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.RecyclerView
 import com.ccm2.projet.thematique.mywallet.R
+import com.ccm2.projet.thematique.mywallet.zipservice.ZipService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -24,6 +28,7 @@ class ItemAdapter(
     private var multiSelect = false
     private val selectedItems = arrayListOf<StorageItem>()
     private var selectedItemsCount = "0"
+    private lateinit var zipService: ZipService
 
     val firebaseStorage = FirebaseStorage.getInstance()
     var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
@@ -142,6 +147,15 @@ class ItemAdapter(
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
 
         }
+        if (item.itemId == R.id.action_qr) {
+            if(selectedItems.isNotEmpty()) {
+                Toast.makeText(context, "Création du zip en cours", Toast.LENGTH_SHORT).show()
+                zipService = ZipService()
+                val zipFile = zipService.zipFilesSelected(selectedItems)
+                Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
+            }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
+        }
+
         return true
     }
 
