@@ -46,9 +46,6 @@ class MailActivity : AppCompatActivity() {
 
         val uriQrCode: String? = intent.getStringExtra("INTENT")
         fileZip = File(uriQrCode)
-        if (uriQrCode != null) {
-            uri = Uri.parse(uriQrCode)
-        }
 
         title = "KotlinApp"
         etEmail = findViewById(R.id.etTo)
@@ -86,12 +83,9 @@ class MailActivity : AppCompatActivity() {
             val requestExpires = "1w".toRequestBody(mediaType)
             val requestMaxDownload = "1".toRequestBody(mediaType)
             if (fileZip.exists()) {
-                val requestFile: RequestBody = RequestBody.create(
-                    mediaType,
-                    fileZip
-                )
+                val requestFile = RequestBody.create("application/zip".toMediaType(), fileZip)
                 val body: MultipartBody.Part =
-                    MultipartBody.Part.createFormData("picture", fileZip.name, requestFile)
+                    MultipartBody.Part.createFormData("file", fileZip.name, requestFile)
                 val call: Call<ResponseBody?>? = service.upload(
                     body,
                     requestExpires,
