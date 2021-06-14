@@ -1,6 +1,5 @@
 package com.ccm2.projet.thematique.mywallet.loginactivity
 
-
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -16,17 +15,20 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import com.ccm2.projet.thematique.mywallet.R
 import com.ccm2.projet.thematique.mywallet.menu.MenuActivity
+import com.ccm2.projet.thematique.mywallet.parametersactivity.ParametersActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
-
 
 class LoginActivity : AppCompatActivity() {
 
@@ -35,9 +37,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var objectSharedPreferences : SharedPreferences
     val PERMISSION_ALL = 1
     private val permissions = arrayOf(
-//        Manifest.permission_group.CAMERA,
-//        Manifest.permission_group.STORAGE,
-//        Manifest.permission.MANAGE_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val policy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.setThreadPolicy(policy)
 
         FirebaseApp.initializeApp(this)
 
@@ -147,8 +146,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun goToMenuActivity() {
         startActivity(Intent(this, MenuActivity::class.java))

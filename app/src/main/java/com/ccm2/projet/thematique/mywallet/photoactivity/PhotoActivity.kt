@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
-import com.ccm2.projet.thematique.mywallet.fileio.FileIO
+//import com.ccm2.projet.thematique.mywallet.fileio.FileIO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.theartofdev.edmodo.cropper.CropImage
@@ -31,7 +31,7 @@ class PhotoActivity : AppCompatActivity() {
 
     private lateinit var resultBitmap: Bitmap
     private lateinit var resultHolyUri: Uri
-    private var tmpFile: FileIO = FileIO()
+    //private var tmpFile: FileIO = FileIO()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +51,17 @@ class PhotoActivity : AppCompatActivity() {
         upload.setOnClickListener{
             alertUpload(resultHolyUri)
         }
-//        valid_photo.setOnClickListener {
-//            // TODO : Envoyer par mail le lien obtenu doesn't work yet
-//            //val link = tmpFile.getLocalLink(resultHolyUri)
-////            if (link != null) {
-////                Log.d("Link", link)
-////            }
-//        }
+
+        valid_photo.setOnClickListener {
+            /**
+            // TODO : Envoyer par mail le lien obtenu doesn't work yet
+            val link = tmpFile.getLocalLink(resultHolyUri)
+            if (link != null) {
+                Log.d("Link", link)
+            }
+        */
+        }
+
     }
     fun alertUpload(holyUri: Uri){
         val alert: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -121,7 +125,7 @@ class PhotoActivity : AppCompatActivity() {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
-
+            System.out.println(result);
             if (resultCode == RESULT_OK) {
                 val resultUri: Uri = result.uri
                 cropImageView.setImageURI(resultUri);
