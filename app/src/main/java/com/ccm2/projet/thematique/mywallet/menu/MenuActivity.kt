@@ -44,9 +44,6 @@ class MenuActivity : AppCompatActivity() {
             goToAppareilPhoto();
         }
 
-        sendFile.setOnClickListener() {
-            goToSendFile();
-        }
 
         // Auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
