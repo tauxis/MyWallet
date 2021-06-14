@@ -23,7 +23,8 @@
         android:roundIcon="@drawable/wallet"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".parametersactivity.ParametersActivity"></activity>
+        <activity android:name=".qrcodeactivity.QRCodeActivity" />
+        <activity android:name=".parametersactivity.ParametersActivity" />
         <activity android:name=".mailactivity.MailActivity" />
         <activity
             android:name=".photoactivity.PhotoActivity"

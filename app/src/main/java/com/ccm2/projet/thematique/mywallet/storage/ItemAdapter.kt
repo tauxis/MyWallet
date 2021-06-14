@@ -2,13 +2,21 @@ package com.ccm2.projet.thematique.mywallet.storage
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.view.*
 import android.view.View.*
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ActionMode
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ccm2.projet.thematique.mywallet.R
+import com.ccm2.projet.thematique.mywallet.mailactivity.MailActivity
+import com.ccm2.projet.thematique.mywallet.qrcodeactivity.QRCodeActivity
+import com.ccm2.projet.thematique.mywallet.zipservice.ZipService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -24,6 +32,7 @@ class ItemAdapter(
     private var multiSelect = false
     private val selectedItems = arrayListOf<StorageItem>()
     private var selectedItemsCount = "0"
+    private lateinit var zipService: ZipService
 
     val firebaseStorage = FirebaseStorage.getInstance()
     var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
@@ -142,6 +151,49 @@ class ItemAdapter(
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
 
         }
+        if (item.itemId == R.id.action_qr) {
+            if(selectedItems.isNotEmpty()) {
+                Toast.makeText(context, "Création du zip en cours", Toast.LENGTH_SHORT).show()
+                //Instanciation de la classe
+                zipService = ZipService(context)
+                //Fichiers séléctionnés dans le ZIP
+                var zipFile: String? = null
+                do {
+                    zipFile= zipService.zipFilesSelected(selectedItems)
+                    Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
+                } while (zipFile.isNullOrEmpty())
+                //On appellera ici FileIoService pour récupérer le link
+                var link_qr :String? = null
+                // à retirer :
+                link_qr = "www.stackoverflow.com"
+                //On appelle l'activité de qrcode en passant en paramètre le lien généré par fileIo
+                startQRCodeActivity(link_qr)
+                //Supprimer le zip lorsqu'il a été utilisé
+                zipService.cleanZip()
+            }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
+        }
+        if (item.itemId == R.id.action_send) {
+            if(selectedItems.isNotEmpty()) {
+                Toast.makeText(context, "ICI ON FAIT MAIL ACTIVITY", Toast.LENGTH_SHORT).show()
+                //Instanciation de la classe
+                zipService = ZipService(context)
+                //Fichiers séléctionnés dans le ZIP
+                var zipFile: String? = null
+                do {
+                    zipFile= zipService.zipFilesSelected(selectedItems)
+                    Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
+                } while (zipFile.isNullOrEmpty())
+                //On appellera ici FileIoService pour récupérer le link
+                var link_mail :String? = null
+                // à retirer :
+                link_mail = "www.stackoverflow.com"
+
+                //ICI ON FAIT MAIL ACTIVITY AVEC LE LIEN FILEIO DANS LE CORPS DU MAIL
+
+                //Supprimer le zip lorsqu'il a été utilisé
+                zipService.cleanZip()
+            }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
+        }
         return true
     }
 
@@ -169,6 +221,11 @@ class ItemAdapter(
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         mode.title=selectedItemsCount
         return true
+    }
+
+    fun startQRCodeActivity(zipFile:String){
+        val qrIntent = Intent(context, QRCodeActivity::class.java).putExtra("INTENT", zipFile)
+        ContextCompat.startActivity(context, qrIntent, null);
     }
 
 }
