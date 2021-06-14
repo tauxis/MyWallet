@@ -11,17 +11,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
-import com.ccm2.projet.thematique.mywallet.fileio.FileIoRetrofit.service
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 
 
@@ -36,21 +25,21 @@ class MailActivity : AppCompatActivity() {
     lateinit var subject: String
     lateinit var message: String
     lateinit var uri: Uri
-    lateinit var fileZip: File
     private val pickFromGallery:Int = 101
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mail)
 
-        val uriQrCode: String? = intent.getStringExtra("INTENT")
-        fileZip = File(uriQrCode)
-
+        val linkFileIO: String? = intent.getStringExtra("INTENT")
+        val bundle = Bundle()
+        bundle.putString("link",linkFileIO)
+        val bundleFileIo = bundle.getString("link")
         title = "KotlinApp"
         etEmail = findViewById(R.id.etTo)
         etSubject = findViewById(R.id.etSubject)
         etMessage = findViewById(R.id.etMessage)
+        etMessage.append(bundleFileIo)
         attachment = findViewById(R.id.btAttachment)
         tvAttachment = findViewById(R.id.tvAttachment)
         send = findViewById(R.id.btSend)
@@ -58,6 +47,7 @@ class MailActivity : AppCompatActivity() {
         attachment.setOnClickListener {
             openFolder()
         }
+
     }
     private fun openFolder() {
         val intent = Intent()
@@ -69,55 +59,9 @@ class MailActivity : AppCompatActivity() {
             pickFromGallery
         )
     }
+    // PB AVEC LE URI
     private fun sendEmail() {
         try {
-            /**System.out.println(uri)
-            val file: File = File(uri.path)
-            Log.d("2",file.absolutePath)
-
-            Log.d("1",file.toString())
-*/
-
-            val mediaType = "application/json; charset=utf-8".toMediaType()
-            val requestUri = uri.toString().toRequestBody(mediaType)
-            val requestExpires = "1w".toRequestBody(mediaType)
-            val requestMaxDownload = "1".toRequestBody(mediaType)
-            if (fileZip.exists()) {
-                val requestFile = RequestBody.create("application/zip".toMediaType(), fileZip)
-                val body: MultipartBody.Part =
-                    MultipartBody.Part.createFormData("file", fileZip.name, requestFile)
-                val call: Call<ResponseBody?>? = service.upload(
-                    body,
-                    requestExpires,
-                    requestMaxDownload
-                )
-                call?.enqueue(object : Callback<ResponseBody?> {
-                    override fun onResponse(
-                        call: Call<ResponseBody?>?,
-                        response: Response<ResponseBody?>?
-                    ) {
-                        Log.v("Upload", "success")
-                        System.out.println(response)
-                        System.out.println(call.toString())
-
-                    }
-
-                    override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
-                        t.message?.let { Log.e("Upload error:", it) }
-
-                    }
-                })
-            }
-            /**val requestFile: RequestBody = RequestBody.create(
-                mediaType,
-                file
-            )
-            val body: MultipartBody.Part =
-                MultipartBody.Part.createFormData("picture", file.name, requestFile)
-*/
-
-
-            //val fileio = uploadFile.upload(requestBody)
             email = etEmail.text.toString()
             subject = etSubject.text.toString()
             message = etMessage.text.toString()
@@ -125,7 +69,7 @@ class MailActivity : AppCompatActivity() {
             emailIntent.type = "plain/text"
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            //emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
             emailIntent.putExtra(Intent.EXTRA_TEXT, message)
             this.startActivity(Intent.createChooser(emailIntent, "Sending email..."))
         }

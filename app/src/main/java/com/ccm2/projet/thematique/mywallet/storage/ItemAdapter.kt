@@ -2,8 +2,6 @@ package com.ccm2.projet.thematique.mywallet.storage
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.CheckBox
@@ -12,16 +10,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ActionMode
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ccm2.projet.thematique.mywallet.R
-import com.ccm2.projet.thematique.mywallet.mailactivity.MailActivity
-import com.ccm2.projet.thematique.mywallet.qrcodeactivity.QRCodeActivity
+import com.ccm2.projet.thematique.mywallet.fileio.FileIoSend
 import com.ccm2.projet.thematique.mywallet.zipservice.ZipService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import java.io.File
 
 class ItemAdapter(
     private val context: Context,
@@ -35,6 +30,7 @@ class ItemAdapter(
     private val selectedItems = arrayListOf<StorageItem>()
     private var selectedItemsCount = "0"
     private lateinit var zipService: ZipService
+    private lateinit var FileIoService: FileIoSend
 
     val firebaseStorage = FirebaseStorage.getInstance()
     var currentFirebaseUser = FirebaseAuth.getInstance().currentUser
@@ -114,7 +110,7 @@ class ItemAdapter(
             holder.checkbox.isChecked=false
             selectedItemsCount = selectedItemsCount()
             activity.invalidateOptionsMenu()
-            Toast.makeText(context, "Objet retiré de la liste.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Objet retiré de la liste.", Toast.LENGTH_SHORT).show()
         } else {
             selectedItems.add(item)
             holder.itemView.alpha = 1.3f
@@ -122,7 +118,7 @@ class ItemAdapter(
             holder.checkbox.isChecked=true
             selectedItemsCount = selectedItemsCount()
             activity.invalidateOptionsMenu()
-            Toast.makeText(context, "Objet ajouté à la liste.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "Objet ajouté à la liste.", Toast.LENGTH_SHORT).show()
         }
         titleChange()
     }
@@ -155,23 +151,14 @@ class ItemAdapter(
         }
         if (item.itemId == R.id.action_qr) {
             if(selectedItems.isNotEmpty()) {
-                Toast.makeText(context, "Création du zip en cours", Toast.LENGTH_SHORT).show()
                 //Instanciation de la classe
                 zipService = ZipService(context)
                 //Fichiers séléctionnés dans le ZIP
                 var zipFile: String? = null
-                do {
-                    zipFile= zipService.zipFilesSelected(selectedItems)
-                    Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
-                } while (zipFile.isNullOrEmpty())
-                //On appellera ici FileIoService pour récupérer le link
-                var link_qr :String? = null
-                // à retirer :
-                link_qr = "www.stackoverflow.com"
-                //On appelle l'activité de qrcode en passant en paramètre le lien généré par fileIo
-                startQRCodeActivity(link_qr)
-                //Supprimer le zip lorsqu'il a été utilisé
-                zipService.cleanZip()
+                zipFile= zipService.zipFilesSelected(selectedItems)
+                //On appelle ici FileIoSend
+                FileIoService = FileIoSend(context)
+                FileIoService.curlFileIo(zipFile,1)
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
         }
         if (item.itemId == R.id.action_send) {
@@ -180,18 +167,11 @@ class ItemAdapter(
                 zipService = ZipService(context)
                 //Fichiers séléctionnés dans le ZIP
                 var zipFile: String? = null
-                do {
-                    zipFile= zipService.zipFilesSelected(selectedItems)
-                    Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
-                } while (zipFile.isNullOrEmpty())
-                //On appellera ici FileIoService pour récupérer le link
-                var link_mail :String? = null
-                // à retirer :
-                link_mail = "www.stackoverflow.com"
-                //ICI ON FAIT MAIL ACTIVITY AVEC LE LIEN FILEIO DANS LE CORPS DU MAIL
-                startMailActivity(zipFile)
-                //Supprimer le zip lorsqu'il a été utilisé
-                //zipService.cleanZip()
+                zipFile= zipService.zipFilesSelected(selectedItems)
+                //Toast.makeText(context, "Zip créé : $zipFile", Toast.LENGTH_SHORT).show()
+                //On appelle fileIo
+                FileIoService = FileIoSend(context)
+                FileIoService.curlFileIo(zipFile,2)
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
         }
         return true
@@ -223,15 +203,6 @@ class ItemAdapter(
         return true
     }
 
-    fun startQRCodeActivity(zipFile:String){
-        val qrIntent = Intent(context, QRCodeActivity::class.java).putExtra("INTENT", zipFile)
-        ContextCompat.startActivity(context, qrIntent, null);
-    }
-
-    fun startMailActivity(zipFile:String){
-        val qrIntent = Intent(context, MailActivity::class.java).putExtra("INTENT", zipFile)
-        ContextCompat.startActivity(context, qrIntent, null);
-    }
 
 }
 

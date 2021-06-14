@@ -8,7 +8,6 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-
 interface FileIoService {
     @Multipart
     @POST("/")
@@ -16,5 +15,6 @@ interface FileIoService {
         @Part file: MultipartBody.Part?,
         @Part("expires") expires: RequestBody?,
         @Part("maxDownloads") maxDownloads: RequestBody?,
-    ): Call<ResponseBody?>?
+        @Part("autoDelete") autodelete : RequestBody?,
+    ): Call<ResponseBody>
 }

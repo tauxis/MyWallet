@@ -1,6 +1,5 @@
 package com.ccm2.projet.thematique.mywallet.loginactivity
 
-
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -31,7 +30,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
 
-
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -39,9 +37,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var objectSharedPreferences : SharedPreferences
     val PERMISSION_ALL = 1
     private val permissions = arrayOf(
-//        Manifest.permission_group.CAMERA,
-//        Manifest.permission_group.STORAGE,
-//        Manifest.permission.MANAGE_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA
@@ -51,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val policy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        StrictMode.setThreadPolicy(policy)
 
         FirebaseApp.initializeApp(this)
 
@@ -151,8 +146,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun goToMenuActivity() {
         startActivity(Intent(this, MenuActivity::class.java))

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
-import android.os.Environment
 import android.util.Log
 import com.ccm2.projet.thematique.mywallet.storage.StorageItem
 import java.io.*
@@ -31,7 +30,7 @@ class ZipService(context: Context) {
             zipOutputStream.setLevel(9)
 
             selectedItems.forEachIndexed { index, item ->
-                Log.d("FILE+$index", item.itemUrl)
+                //Log.d("FILE+$index", item.itemUrl)
                 zip(zipOutputStream, item.itemUrl, item.itemName)
             }
             zipOutputStream.flush()
@@ -42,7 +41,7 @@ class ZipService(context: Context) {
         catch (e: FileNotFoundException){
             Log.e("CREATE FILE", e.toString())
         }
-        Log.d("ZIPFILE", zipFile.toString())
+        //Log.d("ZIPFILE", zipFile.toString())
         return zipFile.toString()
     }
 
