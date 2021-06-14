@@ -1,5 +1,6 @@
 package com.ccm2.projet.thematique.mywallet.zipservice
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
@@ -14,18 +15,16 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 
-open class ZipService {
+class ZipService(context: Context) {
     private val BUFFER_SIZE =8192
-    val path: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-    private val dataPath = "/MyWallet/data"
+    val path: File = File(context.filesDir.toString()+"/MyWallet/data")
     private val filename = "Fichiers_MyWallet.zip"
-    private val mFolder = File(path.absolutePath + dataPath)
 
     fun zipFilesSelected(selectedItems: ArrayList<StorageItem>):String{
-        if (path.exists()) {
-            mFolder.mkdirs()
+        if (!path.exists()) {
+            path.mkdirs()
         }
-        val zipFile = File(mFolder.absolutePath, filename)
+        val zipFile = File(path.absolutePath, filename)
         try {
             val fileOutputStream = FileOutputStream(zipFile);
             val zipOutputStream = ZipOutputStream(BufferedOutputStream(fileOutputStream));
@@ -43,12 +42,11 @@ open class ZipService {
         catch (e: FileNotFoundException){
             Log.e("CREATE FILE", e.toString())
         }
-
         Log.d("ZIPFILE", zipFile.toString())
         return zipFile.toString()
     }
 
-    open fun getBitmapFromURL(src: String?): Bitmap? {
+    private fun getBitmapFromURL(src: String?): Bitmap? {
         return try {
             val url = URL(src)
             val connection: HttpURLConnection = url
@@ -64,7 +62,7 @@ open class ZipService {
     }
 
     fun cleanZip(){
-        mFolder.deleteRecursively()
+        path.deleteRecursively()
     }
 
     private fun zip(
