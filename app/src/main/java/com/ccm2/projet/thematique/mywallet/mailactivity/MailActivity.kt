@@ -36,12 +36,20 @@ class MailActivity : AppCompatActivity() {
     lateinit var subject: String
     lateinit var message: String
     lateinit var uri: Uri
+    lateinit var fileZip: File
     private val pickFromGallery:Int = 101
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mail)
+
+        val uriQrCode: String? = intent.getStringExtra("INTENT")
+        fileZip = File(uriQrCode)
+        if (uriQrCode != null) {
+            uri = Uri.parse(uriQrCode)
+        }
+
         title = "KotlinApp"
         etEmail = findViewById(R.id.etTo)
         etSubject = findViewById(R.id.etSubject)
@@ -66,45 +74,54 @@ class MailActivity : AppCompatActivity() {
     }
     private fun sendEmail() {
         try {
-            System.out.println(uri)
+            /**System.out.println(uri)
             val file: File = File(uri.path)
             Log.d("2",file.absolutePath)
 
             Log.d("1",file.toString())
+*/
 
             val mediaType = "application/json; charset=utf-8".toMediaType()
             val requestUri = uri.toString().toRequestBody(mediaType)
             val requestExpires = "1w".toRequestBody(mediaType)
             val requestMaxDownload = "1".toRequestBody(mediaType)
-            val requestFile: RequestBody = RequestBody.create(
+            if (fileZip.exists()) {
+                val requestFile: RequestBody = RequestBody.create(
+                    mediaType,
+                    fileZip
+                )
+                val body: MultipartBody.Part =
+                    MultipartBody.Part.createFormData("picture", fileZip.name, requestFile)
+                val call: Call<ResponseBody?>? = service.upload(
+                    body,
+                    requestExpires,
+                    requestMaxDownload
+                )
+                call?.enqueue(object : Callback<ResponseBody?> {
+                    override fun onResponse(
+                        call: Call<ResponseBody?>?,
+                        response: Response<ResponseBody?>?
+                    ) {
+                        Log.v("Upload", "success")
+                        System.out.println(response)
+                        System.out.println(call.toString())
+
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
+                        t.message?.let { Log.e("Upload error:", it) }
+
+                    }
+                })
+            }
+            /**val requestFile: RequestBody = RequestBody.create(
                 mediaType,
                 file
             )
             val body: MultipartBody.Part =
                 MultipartBody.Part.createFormData("picture", file.name, requestFile)
+*/
 
-            val call: Call<ResponseBody?>? = service.upload(
-                body,
-                requestExpires,
-                requestMaxDownload
-            )
-            call?.enqueue(object : Callback<ResponseBody?> {
-                override fun onResponse(
-                    call: Call<ResponseBody?>?,
-                    response: Response<ResponseBody?>?
-                ) {
-                    Log.v("Upload", "success")
-                    System.out.println(response)
-                    System.out.println(call.toString())
-
-                }
-
-                override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
-                    t.message?.let { Log.e("Upload error:", it) }
-                    System.out.println("iCIIIIIIIIIIIIIIIIIIIIIIII lkjlkjlkjlkj")
-
-                }
-            })
 
             //val fileio = uploadFile.upload(requestBody)
             email = etEmail.text.toString()

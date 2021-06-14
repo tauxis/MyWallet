@@ -3,6 +3,7 @@ package com.ccm2.projet.thematique.mywallet.storage
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.widget.CheckBox
@@ -20,6 +21,7 @@ import com.ccm2.projet.thematique.mywallet.zipservice.ZipService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class ItemAdapter(
     private val context: Context,
@@ -174,7 +176,6 @@ class ItemAdapter(
         }
         if (item.itemId == R.id.action_send) {
             if(selectedItems.isNotEmpty()) {
-                Toast.makeText(context, "ICI ON FAIT MAIL ACTIVITY", Toast.LENGTH_SHORT).show()
                 //Instanciation de la classe
                 zipService = ZipService(context)
                 //Fichiers séléctionnés dans le ZIP
@@ -187,11 +188,10 @@ class ItemAdapter(
                 var link_mail :String? = null
                 // à retirer :
                 link_mail = "www.stackoverflow.com"
-
                 //ICI ON FAIT MAIL ACTIVITY AVEC LE LIEN FILEIO DANS LE CORPS DU MAIL
-
+                startMailActivity(zipFile)
                 //Supprimer le zip lorsqu'il a été utilisé
-                zipService.cleanZip()
+                //zipService.cleanZip()
             }else Toast.makeText(context, "No items selected", Toast.LENGTH_SHORT).show()
         }
         return true
@@ -225,6 +225,11 @@ class ItemAdapter(
 
     fun startQRCodeActivity(zipFile:String){
         val qrIntent = Intent(context, QRCodeActivity::class.java).putExtra("INTENT", zipFile)
+        ContextCompat.startActivity(context, qrIntent, null);
+    }
+
+    fun startMailActivity(zipFile:String){
+        val qrIntent = Intent(context, MailActivity::class.java).putExtra("INTENT", zipFile)
         ContextCompat.startActivity(context, qrIntent, null);
     }
 
