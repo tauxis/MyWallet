@@ -3,6 +3,7 @@ package com.ccm2.projet.thematique.mywallet.mailactivity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -10,6 +11,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ccm2.projet.thematique.mywallet.R
+import com.ccm2.projet.thematique.mywallet.fileio.FileIoRetrofit.service
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
+
 
 class MailActivity : AppCompatActivity() {
     lateinit var etEmail: EditText
@@ -45,10 +59,54 @@ class MailActivity : AppCompatActivity() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra("return-data", true)
-        startActivityForResult(Intent.createChooser(intent, "Complete action using"), pickFromGallery)
+        startActivityForResult(
+            Intent.createChooser(intent, "Complete action using"),
+            pickFromGallery
+        )
     }
     private fun sendEmail() {
         try {
+            System.out.println(uri)
+            val file: File = File(uri.path)
+            Log.d("2",file.absolutePath)
+
+            Log.d("1",file.toString())
+
+            val mediaType = "application/json; charset=utf-8".toMediaType()
+            val requestUri = uri.toString().toRequestBody(mediaType)
+            val requestExpires = "1w".toRequestBody(mediaType)
+            val requestMaxDownload = "1".toRequestBody(mediaType)
+            val requestFile: RequestBody = RequestBody.create(
+                mediaType,
+                file
+            )
+            val body: MultipartBody.Part =
+                MultipartBody.Part.createFormData("picture", file.name, requestFile)
+
+            val call: Call<ResponseBody?>? = service.upload(
+                body,
+                requestExpires,
+                requestMaxDownload
+            )
+            call?.enqueue(object : Callback<ResponseBody?> {
+                override fun onResponse(
+                    call: Call<ResponseBody?>?,
+                    response: Response<ResponseBody?>?
+                ) {
+                    Log.v("Upload", "success")
+                    System.out.println(response)
+                    System.out.println(call.toString())
+
+                }
+
+                override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
+                    t.message?.let { Log.e("Upload error:", it) }
+                    System.out.println("iCIIIIIIIIIIIIIIIIIIIIIIII lkjlkjlkjlkj")
+
+                }
+            })
+
+            //val fileio = uploadFile.upload(requestBody)
             email = etEmail.text.toString()
             subject = etSubject.text.toString()
             message = etMessage.text.toString()
@@ -64,6 +122,8 @@ class MailActivity : AppCompatActivity() {
             Toast.makeText(this, "Request failed try again: $t", Toast.LENGTH_LONG).show()
         }
     }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == pickFromGallery && resultCode == RESULT_OK) {
